@@ -8,10 +8,16 @@
     "start": "node server.js",
     "test": "node ace test"
   },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
   "devDependencies": {
     "@adonisjs/assembler": "^5.9.6",
-    "@babel/core": "^7.17.0",
-    "@babel/preset-env": "^7.16.0",
+    "@babel/core": "^7.23.2",
+    "@babel/preset-env": "^7.23.2",
     "@japa/preset-adonis": "^1.2.0",
     "@japa/runner": "2.5.1",
     "@symfony/webpack-encore": "4.1.1",
@@ -20,13 +26,15 @@
     "adonis-preset-ts": "^2.1.0",
     "pino-pretty": "^10.2.3",
     "typescript": "~4.6",
-    "webpack": "^5.72",
-    "webpack-cli": "^4.9.1",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^4.10.0",
     "youch": "^3.3.3",
     "youch-terminal": "^2.2.3"
   },
   "dependencies": {
+    "@adonisjs/auth": "^8.2.3",
     "@adonisjs/core": "^5.8.0",
+    "@adonisjs/lucid": "^18.4.2",
     "@adonisjs/repl": "^3.1.0",
     "@adonisjs/session": "^6.2.0",
     "@adonisjs/shield": "^7.0.0",
@@ -39,11 +47,14 @@
     "@inertiajs/react": "^1.0.14",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
+    "luxon": "^3.4.4",
+    "mysql2": "^3.6.5",
     "proxy-addr": "^2.0.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "reflect-metadata": "^0.1.13",
     "source-map-support": "^0.5.21",
+    "styled-components": "^6.1.1",
     "ts-loader": "^8.0.1"
   }
 }
