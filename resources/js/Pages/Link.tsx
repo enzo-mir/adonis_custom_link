@@ -1,9 +1,9 @@
 import React from "react";
 
-function Link({ imgUrl, text }) {
+function Link({ img, text }) {
   return (
     <>
-      {imgUrl ? <img src="" alt="" /> : <p>no image</p>}
+      {img ? <img src={img} alt="" /> : <p>no image</p>}
       {text ? <p>{text}</p> : <p>no text</p>}
     </>
   );

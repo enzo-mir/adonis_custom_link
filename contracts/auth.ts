@@ -1,12 +1,4 @@
-/**
- * Contract source: https://git.io/JOdz5
- *
- * Feel free to let us know via PR, if you find something broken in this
- * file.
- */
-
 import User from "App/Models/User";
-import Datas from "App/Models/Datas";
 
 declare module "@ioc:Adonis/Addons/Auth" {
   interface ProvidersList {

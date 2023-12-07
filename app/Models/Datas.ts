@@ -5,8 +5,8 @@ export default class Datas extends BaseModel {
   public id: string;
 
   @column()
-  public image_url: string | null;
+  public image_url: null | string;
 
   @column()
-  public text: string | null;
+  public text: string;
 }

@@ -13,11 +13,13 @@ export default class LoginPagesController {
 
     const logged = (await ctx.auth.attempt(email, password)) ? true : false;
     if (logged) {
-      await Datas.create({
-        id: ctx.auth.user!.id,
-        image_url: null,
-        text: null,
-      });
+      if (!(await Datas.query().where("id", ctx.auth.user!.id).select("*"))) {
+        await Datas.create({
+          id: ctx.auth.user!.id,
+          image_url: null,
+          text: "",
+        });
+      }
       return ctx.inertia.location("/admin");
     } else {
       return ctx.response.status(400).redirect().toPath("/");

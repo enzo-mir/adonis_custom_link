@@ -1,7 +1,9 @@
 import { useForm } from "@inertiajs/inertia-react";
-import React, { ChangeEvent, FormEvent } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 
 const Login = () => {
+  const [displayForm, setDisplayForm] = useState("register");
+
   const { data, setData, post } = useForm({
     email: "",
     password: "",
@@ -36,38 +38,56 @@ const Login = () => {
   };
   return (
     <>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmitLogin}>
-        <input
-          type="email"
-          name="email"
-          value={data.email}
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="password"
-          value={data.password}
-          onChange={handleChange}
-        />
-        <button type="submit">Envoyer</button>
-      </form>
-      <h1>Register</h1>
-      <form onSubmit={handleSubmitRegister}>
-        <input
-          type="email"
-          name="email"
-          value={data.email}
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="password"
-          value={data.password}
-          onChange={handleChange}
-        />
-        <button type="submit">Envoyer</button>
-      </form>
+      {displayForm === "register" ? (
+        <>
+          <h1>Register</h1>
+          <form onSubmit={handleSubmitRegister}>
+            <input
+              type="email"
+              name="email"
+              value={data.email}
+              onChange={handleChange}
+              placeholder="email"
+            />
+            <input
+              type="password"
+              name="password"
+              value={data.password}
+              onChange={handleChange}
+              placeholder="password"
+            />
+            <button type="submit">Envoyer</button>
+          </form>
+        </>
+      ) : (
+        <>
+          <h1>Login</h1>
+          <form onSubmit={handleSubmitLogin}>
+            <input
+              type="email"
+              name="email"
+              value={data.email}
+              onChange={handleChange}
+              placeholder="email"
+            />
+            <input
+              type="password"
+              name="password"
+              value={data.password}
+              onChange={handleChange}
+              placeholder="password"
+            />
+            <button type="submit">Envoyer</button>
+          </form>
+        </>
+      )}
+      <a
+        onClick={() => {
+          setDisplayForm(displayForm === "register" ? "login" : "register");
+        }}
+      >
+        Go to {displayForm === "register" ? "login" : "register"} form
+      </a>
     </>
   );
 };
