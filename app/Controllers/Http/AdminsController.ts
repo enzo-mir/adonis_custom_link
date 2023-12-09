@@ -6,11 +6,16 @@ import fs from "fs";
 export default class AdminsController {
   public async adminRoute(ctx: HttpContextContract) {
     if (ctx.auth.isLoggedIn) {
+      let imageUrl: Datas[] = await Datas.query().where(
+        "id",
+        ctx.auth.user!.id
+      );
       return ctx.inertia.render("Admin", {
         userInfo: { id: ctx.auth.user?.id, email: ctx.auth.user?.email },
+        oldUrl: imageUrl[0].image_url,
       });
     } else {
-      return ctx.inertia.render("Undefined");
+      return ctx.inertia.render("UndefinedPage");
     }
   }
 
@@ -47,7 +52,7 @@ export default class AdminsController {
         image_url: image_url,
         text: data.text,
       });
-      return ctx.response.status(200);
+      return ctx.response.status(400).json({ err: "error" });
     } catch (error) {
       return ctx.response.status(400).json({ error });
     }

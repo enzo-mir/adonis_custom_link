@@ -2,13 +2,10 @@ import { InertiaApp } from "@inertiajs/inertia-react";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import "../css/app.css";
+const container = document.getElementById("app");
+const page = JSON.parse(container?.dataset.page as string);
+const root = createRoot(container!);
 
-// initial page object with props from server
-const container = document.getElementById("app") as HTMLElement;
-const page = JSON.parse(container.dataset.page as string);
-const root = createRoot(container);
-
-// dynamically load specified page component from "resources/js/Pages/." dir
 async function resolver(pageName: string) {
   const module = await import(`./Pages/${pageName}.tsx`);
   return module.default;
@@ -25,6 +22,3 @@ function App() {
 }
 
 root.render(<App />);
-
-
-

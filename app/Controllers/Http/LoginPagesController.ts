@@ -4,7 +4,7 @@ import Datas from "App/Models/Datas";
 import AuthValidator from "App/Validators/AuthValidator";
 
 export default class LoginPagesController {
-  public async loginPage(ctx: HttpContextContract) {
+  public async loginPage(ctx: HttpContextContract) {    
     return ctx.inertia.render("Login");
   }
 

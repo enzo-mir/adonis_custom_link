@@ -1,21 +1,54 @@
-import { useForm } from "@inertiajs/inertia-react";
+import Inertia, { InertiaLink } from "@inertiajs/inertia-react";
 import React, { FormEvent } from "react";
+import styled from "styled-components";
+const Wrapper = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 2em;
+  width: clamp(500px, 50vw, 700px);
+  background-color: #fff;
+  aspect-ratio: 10 / 7;
+  border-radius: 5px;
+  box-shadow: 0 5px 20px 0px rgb(122, 122, 122);
+  padding-block: 2em;
 
+  & > form {
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+    & > img {
+      max-height: 250px;
+      border-radius: 5px;
+    }
+  }
+`;
 
-const Admin = ({ userInfo }) => {
-  const { data, setData, post } = useForm({
+const Admin = ({ userInfo, oldUrl }) => {
+  const { data, setData, post, errors } = Inertia.useForm({
     image: null,
     text: "",
   });
 
+  const handlePostError = (error: Record<"image" | "text", string>) => {
+    console.error("Erreur lors de la requête POST :", error);
+  };
+
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    post("/updateData", { data });
+    try {
+      post("/updateData", { data });
+      handlePostError(errors);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   function handleChangeImg(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files![0];
-    
+
     setData({
       ...data,
       [event.target.name]: file,
@@ -23,9 +56,10 @@ const Admin = ({ userInfo }) => {
   }
 
   return (
-    <>
+    <Wrapper>
       <h1>{userInfo.email}</h1>
       <form onSubmit={handleSubmit}>
+        <img src={oldUrl} alt="" />
         <input type="file" name="image" id="" onChange={handleChangeImg} />
         <input
           type="text"
@@ -41,8 +75,13 @@ const Admin = ({ userInfo }) => {
         />
         <input type="submit" value="envoyer" />
       </form>
-      <a href={`http://127.0.0.1:3333/link/${userInfo.id}`} target="_blank">Link</a>
-    </>
+      <InertiaLink
+        href={`http://127.0.0.1:3333/link/${userInfo.id}`}
+        target="_blank"
+      >
+        Custom link
+      </InertiaLink>
+    </Wrapper>
   );
 };
 

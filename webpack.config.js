@@ -1,50 +1,13 @@
 const { join } = require("path");
 const Encore = require("@symfony/webpack-encore");
 
-/*
-|--------------------------------------------------------------------------
-| Encore runtime environment
-|--------------------------------------------------------------------------
-*/
 if (!Encore.isRuntimeEnvironmentConfigured()) {
   Encore.configureRuntimeEnvironment(process.env.NODE_ENV || "dev");
 }
 
-/*
-|--------------------------------------------------------------------------
-| Output path
-|--------------------------------------------------------------------------
-|
-| The output path for writing the compiled files. It should always
-| be inside the public directory, so that AdonisJS can serve it.
-|
-*/
 Encore.setOutputPath("./public/assets");
-
-/*
-|--------------------------------------------------------------------------
-| Public URI
-|--------------------------------------------------------------------------
-|
-| The public URI to access the static files. It should always be
-| relative from the "public" directory.
-|
-*/
 Encore.setPublicPath("/assets");
 
-/*
-|--------------------------------------------------------------------------
-| Entrypoints
-|--------------------------------------------------------------------------
-|
-| Entrypoints are script files that boots your frontend application. Ideally
-| a single entrypoint is used by majority of applications. However, feel
-| free to add more (if required).
-|
-| Also, make sure to read the docs on "Assets bundler" to learn more about
-| entrypoints.
-|
-*/
 Encore.addEntry("app", "./resources/js/app.tsx");
 Encore.enableTypeScriptLoader();
 Encore.enableReactPreset();

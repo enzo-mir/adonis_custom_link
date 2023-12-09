@@ -1,14 +1,15 @@
 {
   "extends": "adonis-preset-ts/tsconfig.json",
-  "include": ["**/*"],
+  "include": ["resources/js/**/*"],
   "exclude": ["node_modules", "build"],
   "compilerOptions": {
+    "target": "ES6",
     "outDir": "build",
     "rootDir": "./",
     "sourceMap": true,
     "jsx": "react",
-    "baseUrl": "./",
-    "lib": ["DOM"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": true,
     "esModuleInterop": true,
     "paths": {
       "App/*": ["./app/*"],
