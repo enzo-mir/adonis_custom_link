@@ -1,11 +1,11 @@
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
-import User from "App/Models/User";
-import Datas from "App/Models/Datas";
-import AuthValidator from "App/Validators/AuthValidator";
+import User from "../../Models/User";
+import Datas from "../../Models/Datas";
+import AuthValidator from "../../Validators/AuthValidator";
 
 export default class LoginPagesController {
-  public async loginPage(ctx: HttpContextContract) {    
-    return ctx.inertia.render("Login");
+  public async loginPage(ctx: HttpContextContract) {
+    return ctx.inertia.render("Login", { errors: "" });
   }
 
   public async login(ctx: HttpContextContract) {
@@ -13,14 +13,18 @@ export default class LoginPagesController {
 
     const logged = (await ctx.auth.attempt(email, password)) ? true : false;
     if (logged) {
-      if (!(await Datas.query().where("id", ctx.auth.user!.id).select("*"))) {
+      if (
+        !(await Datas.query().where("id", ctx.auth.user!.id).select("*")).length
+      ) {
         await Datas.create({
           id: ctx.auth.user!.id,
           image_url: null,
           text: "",
         });
+        return ctx.inertia.location("/admin");
+      } else {
+        return ctx.inertia.location("/admin");
       }
-      return ctx.inertia.location("/admin");
     } else {
       return ctx.response.status(400).redirect().toPath("/");
     }
@@ -32,9 +36,13 @@ export default class LoginPagesController {
       const user = await User.create(data);
       await ctx.auth.login(user);
 
-      return ctx.response.redirect("/");
+      return ctx.inertia.render("Login", {
+        errors: { message: "Compte créer !" },
+      });
     } catch (error) {
-      console.log(error);
+      return ctx.inertia.render("Login", {
+        errors: { message: "Adress e-mail already used !" },
+      });
     }
   }
 }

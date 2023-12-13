@@ -1,5 +1,5 @@
 import Inertia, { InertiaLink } from "@inertiajs/inertia-react";
-import React, { FormEvent } from "react";
+import { FormEvent } from "react";
 import styled from "styled-components";
 const Wrapper = styled.div`
   position: relative;
@@ -19,17 +19,21 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2em;
-    & > img {
+    & img {
       max-height: 250px;
       border-radius: 5px;
+    }
+
+    & > input[type="file"] {
     }
   }
 `;
 
-const Admin = ({ userInfo, oldUrl }) => {
+const Admin = ({ userInfo, oldUrl, oldText }) => {
   const { data, setData, post, errors } = Inertia.useForm({
-    image: null,
-    text: "",
+    image: oldUrl || null,
+    fileUrl: "",
+    text: oldText || "",
   });
 
   const handlePostError = (error: Record<"image" | "text", string>) => {
@@ -40,9 +44,8 @@ const Admin = ({ userInfo, oldUrl }) => {
     e.preventDefault();
     try {
       post("/updateData", { data });
-      handlePostError(errors);
     } catch (error) {
-      console.log(error);
+      handlePostError(errors);
     }
   }
 
@@ -51,6 +54,7 @@ const Admin = ({ userInfo, oldUrl }) => {
 
     setData({
       ...data,
+      fileUrl: URL.createObjectURL(file),
       [event.target.name]: file,
     });
   }
@@ -59,11 +63,20 @@ const Admin = ({ userInfo, oldUrl }) => {
     <Wrapper>
       <h1>{userInfo.email}</h1>
       <form onSubmit={handleSubmit}>
-        <img src={oldUrl} alt="" />
-        <input type="file" name="image" id="" onChange={handleChangeImg} />
+        <label htmlFor="image">
+          <img src={data.fileUrl.length ? data.fileUrl : oldUrl} alt="" />
+        </label>
+        <input
+          type="file"
+          name="image"
+          id="image"
+          onChange={handleChangeImg}
+          hidden
+        />
         <input
           type="text"
           name="text"
+          value={data.text}
           onChange={(e) => {
             setData({
               ...data,
@@ -75,10 +88,10 @@ const Admin = ({ userInfo, oldUrl }) => {
         />
         <input type="submit" value="envoyer" />
       </form>
-      <InertiaLink
-        href={`http://127.0.0.1:3333/link/${userInfo.id}`}
-        target="_blank"
-      >
+      <InertiaLink href="logout" target="_blank">
+        Logout
+      </InertiaLink>
+      <InertiaLink href={`/link/${userInfo.id}`} target="_blank">
         Custom link
       </InertiaLink>
     </Wrapper>

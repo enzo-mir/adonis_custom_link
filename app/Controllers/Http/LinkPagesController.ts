@@ -1,5 +1,5 @@
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
-import Datas from "App/Models/Datas";
+import Datas from "../../Models/Datas";
 
 export default class LinkPagesController {
   public async link(ctx: HttpContextContract) {

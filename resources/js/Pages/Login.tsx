@@ -1,6 +1,7 @@
 import { useForm } from "@inertiajs/inertia-react";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import styled from "styled-components";
+import Popup from "./components/Popup";
 
 const Wrapper = styled.div`
   position: relative;
@@ -45,13 +46,20 @@ const Wrapper = styled.div`
   }
 `;
 
-const Login = () => {
+const Login = ({ errors }: { errors: { message: string } }) => {
   const [displayForm, setDisplayForm] = useState("register");
-  const { data, setData, post } = useForm({
+  const [displayPopup, setDisplayPopup] = useState(false);
+  useEffect(() => {
+    errors.message ? setDisplayPopup(true) : setDisplayPopup(false);
+  }, [errors]);
+
+  const { data, setData, post, processing, reset } = useForm({
     email: "",
     password: "",
   });
-
+  useEffect(() => {
+    errors.message ? setDisplayPopup(true) : setDisplayPopup(false);
+  }, [errors]);
   function handleChange(e: ChangeEvent) {
     setData((values) => ({
       ...values,
@@ -62,76 +70,78 @@ const Login = () => {
 
   const handleSubmitLogin = async (event: FormEvent) => {
     event.preventDefault();
-
-    try {
-      post("/login", { data });
-    } catch (error) {
-      console.error("Erreur lors de l'envoi de la requête :", error);
-    }
+    post("/login", {
+      data,
+    });
   };
 
   const handleSubmitRegister = async (event: FormEvent) => {
     event.preventDefault();
-
-    try {
-      post("/register", { data });
-    } catch (error) {
-      console.error("Erreur lors de l'envoi de la requête :", error);
-    }
+    post("/register", {
+      data,
+    });
   };
   return (
-    <Wrapper>
-      {displayForm === "register" ? (
-        <>
-          <h1>Register</h1>
-          <form onSubmit={handleSubmitRegister}>
-            <input
-              type="email"
-              name="email"
-              value={data.email}
-              onChange={handleChange}
-              placeholder="email"
-            />
-            <input
-              type="password"
-              name="password"
-              value={data.password}
-              onChange={handleChange}
-              placeholder="password"
-            />
-            <button type="submit">Envoyer</button>
-          </form>
-        </>
-      ) : (
-        <>
-          <h1>Login</h1>
-          <form onSubmit={handleSubmitLogin}>
-            <input
-              type="email"
-              name="email"
-              value={data.email}
-              onChange={handleChange}
-              placeholder="email"
-            />
-            <input
-              type="password"
-              name="password"
-              value={data.password}
-              onChange={handleChange}
-              placeholder="password"
-            />
-            <button type="submit">Envoyer</button>
-          </form>
-        </>
+    <>
+      {displayPopup && (
+        <Popup setDisplay={setDisplayPopup} message={errors.message} />
       )}
-      <a
-        onClick={() => {
-          setDisplayForm(displayForm === "register" ? "login" : "register");
-        }}
-      >
-        Go to {displayForm === "register" ? "login" : "register"} form
-      </a>
-    </Wrapper>
+      <Wrapper>
+        {displayForm === "register" ? (
+          <>
+            <h1>Register</h1>
+            <form onSubmit={handleSubmitRegister}>
+              <input
+                type="email"
+                name="email"
+                value={data.email}
+                onChange={handleChange}
+                placeholder="email"
+              />
+              <input
+                type="password"
+                name="password"
+                value={data.password}
+                onChange={handleChange}
+                placeholder="password"
+              />
+              <button type="submit" disabled={processing}>
+                Envoyer
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <h1>Login</h1>
+            <form onSubmit={handleSubmitLogin}>
+              <input
+                type="email"
+                name="email"
+                value={data.email}
+                onChange={handleChange}
+                placeholder="email"
+              />
+              <input
+                type="password"
+                name="password"
+                value={data.password}
+                onChange={handleChange}
+                placeholder="password"
+              />
+              <button type="submit">Envoyer</button>
+            </form>
+          </>
+        )}
+        <a
+          onClick={() => {
+            reset();
+            setDisplayForm(displayForm === "register" ? "login" : "register");
+          }}
+        >
+          Go to {displayForm === "register" ? "login" : "register"} form
+        </a>
+      </Wrapper>
+    </>
   );
 };
 
