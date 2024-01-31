@@ -5,7 +5,7 @@ import AuthValidator from "../../Validators/AuthValidator";
 
 export default class LoginPagesController {
   public async loginPage(ctx: HttpContextContract) {
-    return ctx.inertia.render("Login", { errors: "" });
+    return ctx.inertia.render("Login");
   }
 
   public async login(ctx: HttpContextContract) {
@@ -13,18 +13,7 @@ export default class LoginPagesController {
 
     const logged = (await ctx.auth.attempt(email, password)) ? true : false;
     if (logged) {
-      if (
-        !(await Datas.query().where("id", ctx.auth.user!.id).select("*")).length
-      ) {
-        await Datas.create({
-          id: ctx.auth.user!.id,
-          image_url: null,
-          text: "",
-        });
-        return ctx.inertia.location("/admin");
-      } else {
-        return ctx.inertia.location("/admin");
-      }
+      return ctx.inertia.location("/admin");
     } else {
       return ctx.response.status(400).redirect().toPath("/");
     }
@@ -33,16 +22,22 @@ export default class LoginPagesController {
   public async register(ctx: HttpContextContract) {
     try {
       const data = await ctx.request.validate(AuthValidator);
-      const user = await User.create(data);
-      await ctx.auth.login(user);
 
+      await User.create(data);
+      await ctx.auth.attempt(data.email, data.password);
+      await Datas.create({
+        id: ctx.auth.user!.id,
+        image_url: null,
+        text: "",
+      });
       return ctx.inertia.render("Login", {
-        errors: { message: "Compte créer !" },
+        success: { message: "Compte créer !" },
       });
     } catch (error) {
-      return ctx.inertia.render("Login", {
-        errors: { message: "Adress e-mail already used !" },
-      });
+      console.log(error);
+      
+      ctx.session.flash({ errors: error.messages });
+      return ctx.response.redirect().back();
     }
   }
 }

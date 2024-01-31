@@ -1,5 +1,5 @@
 import { useForm } from "@inertiajs/inertia-react";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import styled from "styled-components";
 import Popup from "./components/Popup";
 
@@ -46,20 +46,16 @@ const Wrapper = styled.div`
   }
 `;
 
-const Login = ({ errors }: { errors: { message: string } }) => {
+const Login = () => {
   const [displayForm, setDisplayForm] = useState("register");
   const [displayPopup, setDisplayPopup] = useState(false);
-  useEffect(() => {
-    errors.message ? setDisplayPopup(true) : setDisplayPopup(false);
-  }, [errors]);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { data, setData, post, processing, reset } = useForm({
     email: "",
     password: "",
   });
-  useEffect(() => {
-    errors.message ? setDisplayPopup(true) : setDisplayPopup(false);
-  }, [errors]);
+
   function handleChange(e: ChangeEvent) {
     setData((values) => ({
       ...values,
@@ -79,12 +75,18 @@ const Login = ({ errors }: { errors: { message: string } }) => {
     event.preventDefault();
     post("/register", {
       data,
+      onError: (err) => {
+        setErrorMessage(err?.password || err?.email);
+      },
+      onSuccess: () => {
+        setDisplayPopup(false);
+      },
     });
   };
   return (
     <>
       {displayPopup && (
-        <Popup setDisplay={setDisplayPopup} message={errors.message} />
+        <Popup setDisplay={setDisplayPopup} message={errorMessage} />
       )}
       <Wrapper>
         {displayForm === "register" ? (

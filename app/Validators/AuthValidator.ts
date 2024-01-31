@@ -6,8 +6,11 @@ export default class AuthValidator {
 
   public schema = schema.create({
     email: schema.string([rules.email(), rules.trim()]),
-    password: schema.string([rules.trim()]),
+    password: schema.string([rules.minLength(5)]),
   });
 
-  public messages: CustomMessages = {};
+  public messages: CustomMessages = {
+    email: "email invalid",
+    password: "password must be further than 8 char",
+  };
 }

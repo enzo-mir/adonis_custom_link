@@ -54,9 +54,22 @@ export default class AdminsController {
         image_url: image_url,
         text: data.text,
       });
-      return ctx.response.status(200).json({ img: image_url });
+
+      let getUserData: Datas[] = await Datas.query().where(
+        "id",
+        ctx.auth.user!.id
+      );
+
+      return ctx.inertia.render("Admin", {
+        userInfo: { id: ctx.auth.user?.id, email: ctx.auth.user?.email },
+        oldUrl: getUserData[0].image_url,
+        oldText: getUserData[0].text,
+        succes: image_url,
+      });
     } catch (error) {
-      return ctx.response.status(400).json({ error });
+      return ctx.inertia.render("Admin", {
+        error: "Something went wrong !",
+      });
     }
   }
 }

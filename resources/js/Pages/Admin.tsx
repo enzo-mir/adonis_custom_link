@@ -1,6 +1,7 @@
 import Inertia, { InertiaLink } from "@inertiajs/inertia-react";
-import { FormEvent } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import styled from "styled-components";
+import Popup from "./components/Popup";
 const Wrapper = styled.div`
   position: relative;
   display: flex;
@@ -29,24 +30,33 @@ const Wrapper = styled.div`
   }
 `;
 
-const Admin = ({ userInfo, oldUrl, oldText }) => {
-  const { data, setData, post, errors } = Inertia.useForm({
-    image: oldUrl || null,
+const Admin = ({
+  userInfo,
+  oldUrl,
+  oldText,
+  error,
+  success,
+}: {
+  error: string;
+  success: string;
+  userInfo: any;
+  oldUrl: string | null;
+  oldText: string;
+}) => {
+  const [displayPopup, setdisplayPopup] = useState(false);
+
+  useEffect(() => {
+    error || success ? setdisplayPopup(true) : setdisplayPopup(false);
+  }, [error, success]);
+  const { data, setData, post } = Inertia.useForm({
+    image: oldUrl || success || null,
     fileUrl: "",
     text: oldText || "",
   });
 
-  const handlePostError = (error: Record<"image" | "text", string>) => {
-    console.error("Erreur lors de la requête POST :", error);
-  };
-
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    try {
-      post("/updateData", { data });
-    } catch (error) {
-      handlePostError(errors);
-    }
+    post("/updateData", { data });
   }
 
   function handleChangeImg(event: React.ChangeEvent<HTMLInputElement>) {
@@ -60,41 +70,45 @@ const Admin = ({ userInfo, oldUrl, oldText }) => {
   }
 
   return (
-    <Wrapper>
-      <h1>{userInfo.email}</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="image">
-          <img src={data.fileUrl.length ? data.fileUrl : oldUrl} alt="" />
-        </label>
-        <input
-          type="file"
-          name="image"
-          id="image"
-          onChange={handleChangeImg}
-          hidden
-        />
-        <input
-          type="text"
-          name="text"
-          value={data.text}
-          onChange={(e) => {
-            setData({
-              ...data,
-              [(e.target as HTMLInputElement).name]: (
-                e.target as HTMLInputElement
-              ).value,
-            });
-          }}
-        />
-        <input type="submit" value="envoyer" />
-      </form>
-      <InertiaLink href="logout" target="_blank">
-        Logout
-      </InertiaLink>
-      <InertiaLink href={`/link/${userInfo.id}`} target="_blank">
-        Custom link
-      </InertiaLink>
-    </Wrapper>
+    <>
+      {displayPopup && (
+        <Popup setDisplay={setdisplayPopup} message={error || success} />
+      )}
+      <Wrapper>
+        <h1>{userInfo.email}</h1>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="image">
+            <img src={data.fileUrl.length ? data.fileUrl : oldUrl!} alt="" />
+          </label>
+          <input
+            type="file"
+            name="image"
+            id="image"
+            onChange={handleChangeImg}
+          />
+          <input
+            type="text"
+            name="text"
+            value={data.text}
+            onChange={(e) => {
+              setData({
+                ...data,
+                [(e.target as HTMLInputElement).name]: (
+                  e.target as HTMLInputElement
+                ).value,
+              });
+            }}
+          />
+          <input type="submit" value="envoyer" />
+        </form>
+        <InertiaLink href="logout" target="_blank">
+          Logout
+        </InertiaLink>
+        <InertiaLink href={`/link/${userInfo.id}`} target="_blank">
+          Custom link
+        </InertiaLink>
+      </Wrapper>
+    </>
   );
 };
 

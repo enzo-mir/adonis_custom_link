@@ -25,7 +25,14 @@ const Popup = ({
   return (
     <Wrapper>
       <p>{message}</p>
-      <button onClick={() => setDisplay(false)}>Close</button>
+
+      <button
+        onClick={() => {
+          setDisplay(false);
+        }}
+      >
+        Close
+      </button>
     </Wrapper>
   );
 };

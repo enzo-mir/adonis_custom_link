@@ -6,7 +6,7 @@ Route.get("/logout", async (ctx) => {
 });
 Route.get("/admin", "AdminsController.adminRoute");
 Route.get("/register", "LoginPagesController.loginPage").as("home");
-Route.get("/", (ctx) => ctx.response.redirect().toRoute("home"));
+Route.get("/", (ctx) => ctx.response.redirect().toPath("/register"));
 Route.post("/login", "LoginPagesController.login");
 Route.post("/updateData", "AdminsController.updateData").middleware("auth");
 Route.post("/register", "LoginPagesController.register");
