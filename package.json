@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "node ace serve --watch",
-    "build": "netlify deploy --prod",
+    "build": "adonis build --production",
     "start": "node server.js",
     "test": "node ace test"
   },
